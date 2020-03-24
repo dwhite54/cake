@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <unordered_set>
 
 // C++11 lest unit testing framework
 #include "lest.hpp"
@@ -9,54 +9,22 @@ using namespace std;
 
 bool hasPalindromePermutation(const string& str)
 {
-    // check if any permutation of the input is a palindrome
-    unordered_map<char, int> counts;
+    // track characters we've seen an odd number of times
+    unordered_set<char> unpairedCharacters;
 
-    //count all characters in string
-    for (auto s : str) {
-        if (counts.find(s) != counts.end()) {
-            counts[s]++;
-        } else {
-            counts[s] = 1;
+    for (char c : str) {
+        if (unpairedCharacters.find(c) != unpairedCharacters.end()) {
+            unpairedCharacters.erase(c);
+        }
+        else {
+            unpairedCharacters.insert(c);
         }
     }
 
-    //look for odd counts. if it's an odd-length string, one is required, otherwise none are allowed
-    bool isOdd = str.size() % 2 == 1;
-    bool foundOdd = false;
-    for (auto char_count : counts) {
-        if (char_count.second % 2 != 0) {
-            if (isOdd && foundOdd) { //already found an odd count, can't have two
-                return false;
-            } else if (!isOdd) { //even length string can have no odd counts
-                return false;
-            }
-            foundOdd = true;
-        }
-    }
-    if (isOdd && !foundOdd) {
-        return false;
-    } //don't need to check even, that's in the loop
-
-    return true;
+    // the string has a palindrome permutation if it
+    // has one or zero characters without a pair
+    return unpairedCharacters.size() <= 1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // tests
 
